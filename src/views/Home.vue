@@ -2,25 +2,20 @@
   <div class="background">
     <el-container>
       <el-aside width="200px">
-        <div style="height: 900px;background-color: #334154">
+        <div style="height: 100%;background-color: #334154">
           <el-menu
               active-text-color="#1989FA"
               background-color="#334154"
-              active-background-color="#334154"
+              default-openeds="1"
               class="el-menu-vertical-demo"
               default-active="2"
               text-color="#fff"
-          >
-            <el-sub-menu index="1">
-              <template #title>
-                <el-icon><location /></el-icon>
-                <span>Navigator One</span>
-              </template>
-              <el-menu-item-group title="借教室系统">
-                <el-menu-item index="1-1">教室信息查询</el-menu-item>
-                <el-menu-item index="1-2">item one</el-menu-item>
-              </el-menu-item-group>
-            </el-sub-menu>
+              :router="true">
+            <div style="height: 50px;width: 100%;background-color: azure">
+              此处放Logo
+            </div>
+            <el-menu-item index="/BorrowRoom" style="background-color: #222D3C">教室借用</el-menu-item>
+            <el-menu-item index="/BorrowInfoList">教室借用记录查询</el-menu-item>
           </el-menu>
         </div>
       </el-aside>
@@ -42,6 +37,6 @@ export default {
 <style scoped>
 .background{
   width: 1440px;
-  height: 900px;
+  height: 100%;
 }
 </style>

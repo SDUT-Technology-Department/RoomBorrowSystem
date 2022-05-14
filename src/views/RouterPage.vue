@@ -21,16 +21,16 @@
         <el-space direction="vertical">
           <p>父页面</p>
           <el-button type="primary" @click="$router.push('/Home')">首页</el-button>
-          <el-button type="primary" @click="$router.push('/StuHome')">学生页面</el-button>
-          <el-button type="primary" @click="$router.push('/TeacherHome')">教师页面</el-button>
-          <el-button type="primary" @click="$router.push('/AdminHome')">管理员页面</el-button>
+          <el-button type="primary" @click="$router.push('/')"></el-button>
+          <el-button type="primary" @click="$router.push('/')"></el-button>
+          <el-button type="primary" @click="$router.push('/')"></el-button>
         </el-space>
       </el-card>
 
       <el-card>
         <el-space direction="vertical">
-          <p>学生页面</p>
-          <el-button type="primary" @click="$router.push('/')"></el-button>
+          <p>借教室</p>
+          <el-button type="primary" @click="$router.push('/RoomList')">教室列表</el-button>
           <p></p>
 
           <el-space direction="vertical">
