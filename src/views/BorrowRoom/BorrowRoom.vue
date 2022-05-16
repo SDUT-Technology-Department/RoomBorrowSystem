@@ -1,4 +1,5 @@
 <template>
+  <el-page-header content="借用登记" style="margin-bottom: 30px" @back="this.$router.push('/Login')"/>
   <el-card>
     <el-form label-width="120px">
       <el-form-item label="日期">
@@ -25,7 +26,21 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
-              @change="getRoom"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="原因">
+        <el-select
+            v-model="QueryForm.reason"
+
+            placeholder="请选择借用原因"
+            style="width: 200px"
+            @change="getRoom">
+          <el-option
+              v-for="item in ReasonOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
           />
         </el-select>
       </el-form-item>
@@ -147,6 +162,20 @@ export default {
         key:'第九、十节',
         value:5
       },],
+      ReasonOptions:[
+          {
+        label:'会议',
+        key:'会议',
+        value:'会议'
+      },{
+        label:'上课',
+        key:'上课',
+        value:'上课'
+      },{
+        label:'活动',
+        key:'活动',
+        value:'活动'
+      }],
 
       Rooms:[],
 
@@ -167,10 +196,10 @@ export default {
     }
   },
   mounted() {
-    this.getAllRoom();
+    // this.getAllRoom();
   },
   methods:{
-    getAllRoom(){
+   /* getAllRoom(){
       this.$http({
         method:'get',
         url:'/room/getAllRoom',
@@ -189,10 +218,10 @@ export default {
           this.Rooms = res.data.data;
         }
       })
-  },
+  },*/
 
     getRoom(){
-      if (this.QueryForm.date!=='' && this.QueryForm.timeId!==''){
+      if (this.QueryForm.date!=='' && this.QueryForm.reason!=='' && this.QueryForm.timeId!==''){
         this.$http({
           method:'post',
           url:'/room/searchRoomForBorrow',
@@ -261,8 +290,6 @@ export default {
     confirmBorrow(){
       this.confirmDialogVisible = false;
 
-      let date= new Date();
-
       let year = new Date().getFullYear();
 
       let month = new Date().getMonth() +1;
@@ -274,7 +301,8 @@ export default {
       let minute = new Date().getMinutes();
 
       let second = new Date().getSeconds();
-      this.QueryForm.applyTime = year + '-' + month + '-' + day
+
+      this.QueryForm.applyTime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
 
       this.$http({
         method:'post',
@@ -288,7 +316,7 @@ export default {
             })
           }else {
             this.messageAlert();
-            this.getAllRoom();
+            this.getRoom();
           }
       })
     }
