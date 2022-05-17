@@ -68,11 +68,13 @@
     <div style="margin-left:20px;margin-right:20px;padding-left: 70px;padding-top: 40px;padding-bottom: 30px">
 
       <el-table :data="borrowInfo" stripe  border :highlight-current-row="true" style="width: 100%">
+        <el-table-column prop="date" label="日期" width="180" />
         <el-table-column prop="roomName" label="教室名称" width="180" />
-        <el-table-column prop="date" label="借用日期" width="180" />
-        <el-table-column prop="timeName" label="借用时间" />
-        <el-table-column prop="reason" label="借用原因" />
+        <el-table-column prop="reason" label="用途" />
         <el-table-column prop="userName" label="借用人" />
+        <el-table-column prop="reason" label="所属部门/班级" />
+        <el-table-column prop="reason" label="联系方式" />
+        <el-table-column prop="timeName" label="借用时间" />
         <el-table-column prop="applyTime" label="申请时间" />
       </el-table>
 
