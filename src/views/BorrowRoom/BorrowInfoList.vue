@@ -53,12 +53,15 @@
             style="width: 200px"
             @change="getBorrowInfo">
           <el-option
-              v-for="item in ReasonOptions"
+              v-for="item in RoomOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="用户">
+        <el-input v-model="screenForm.userId" style="width: 200px" @change="getBorrowInfo"/>
       </el-form-item>
     </el-form>
     <el-divider />
@@ -104,7 +107,8 @@ export default {
           label:'第九、十节',
           key:'第九、十节',
           value:5
-        },],
+        },
+      ],
       ReasonOptions:[
         {
           label:'会议',
@@ -118,7 +122,9 @@ export default {
           label:'活动',
           key:'活动',
           value:'活动'
-        }],
+        }
+        ],
+      RoomOptions:[],
 
       borrowInfo:[],
 
@@ -132,10 +138,35 @@ export default {
     }
   },
   mounted() {
+    this.getAllRoom();
     this.getBorrowInfo();
   },
   methods:{
+     getAllRoom(){
+      this.$http({
+        method:'get',
+        url:'/room/getAllRoom',
+      }).then(res =>{
+        console.log(res);
+        if (res.data.code !== 200){
+          ElMessage({
+            message: '教室信息获取失败，请联系工具人QQ3231977651',
+            type: 'error',
+          })
+          return;
+        }
+
+        for (let i=0;i<res.data.data.length;i++){
+          this.RoomOptions.push({
+            key:res.data.data[i].roomName,
+            value: res.data.data[i].roomId,
+            label: res.data.data[i].roomName,
+          })
+        }
+      })
+  },
     getBorrowInfo(){
+       console.log(this.screenForm);
       this.$http({
         method:'post',
         url:'/room/searchBorrowedInfoByOptions',

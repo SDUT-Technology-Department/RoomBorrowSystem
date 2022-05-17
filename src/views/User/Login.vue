@@ -43,6 +43,13 @@ export default {
             message: '你好，' + res.data.data.username,
             type: 'success',
           })
+
+          //保存信息
+          window.sessionStorage.setItem('role',res.data.data.role);
+          window.sessionStorage.setItem('username',res.data.data.username);
+          window.sessionStorage.setItem('userId', res.data.data.userId);
+          this.$router.push('/Home');
+
         }else {
           ElNotification({
             title: '服务器错误',

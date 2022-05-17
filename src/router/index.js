@@ -8,6 +8,7 @@ const routes = [
   {
     path: '/Home',
     name: 'Home',
+    redirect: '/BorrowRoom',
     component: () => import('../views/Home.vue'),
     //---------------------教室借用相关-----------------------------
     children:[{

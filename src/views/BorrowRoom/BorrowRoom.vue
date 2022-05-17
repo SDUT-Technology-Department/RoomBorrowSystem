@@ -53,7 +53,7 @@
             disabled
         />
       </el-form-item>
-      <el-form-item label="会议室" @click="messageAlert">
+      <el-form-item label="会议室" @click="messageAlert" v-show="userInfo.role !== 'student'">
         <el-switch
             v-model="QueryForm.isSpecial"
             class="ml-2"
@@ -72,6 +72,7 @@
           <el-card :body-style="{ padding: '0px' }" style="height: 235px;width: 200px;">
             <div style="height: 110px;width: 200px;">
               <el-image :src="item.img" />
+              此处是教室图片
             </div>
 
             <div style="padding: 14px">
@@ -177,6 +178,11 @@ export default {
         value:'活动'
       }],
 
+      userInfo:{
+        userId:'',
+        role:'',
+      },
+
       Rooms:[],
 
       QueryForm:{
@@ -196,30 +202,10 @@ export default {
     }
   },
   mounted() {
-    // this.getAllRoom();
+    this.userInfo.userId = window.sessionStorage.getItem('userId');
+    this.userInfo.role = window.sessionStorage.getItem('role');
   },
   methods:{
-   /* getAllRoom(){
-      this.$http({
-        method:'get',
-        url:'/room/getAllRoom',
-      }).then(res =>{
-        if (res.data.code !== 200){
-          ElMessage({
-            message: '教室信息获取失败，请联系工具人QQ3231977651',
-            type: 'error',
-          })
-        }else {
-          ElMessage({
-            message: '教室信息获取成功',
-            type: 'success',
-          })
-
-          this.Rooms = res.data.data;
-        }
-      })
-  },*/
-
     getRoom(){
       if (this.QueryForm.date!=='' && this.QueryForm.reason!=='' && this.QueryForm.timeId!==''){
         this.$http({
@@ -244,7 +230,7 @@ export default {
       }
 
     },
-
+    //借用请求预处理
     preBorrow(roomId,roomName){
       if(this.QueryForm.date === '' || this.QueryForm.timeId.length === 0){
         ElMessage({
@@ -254,6 +240,7 @@ export default {
         return;
       }
 
+      //添加时间ID
       let timeName;
       switch (this.QueryForm.timeId){
         case 1:timeName = '第一、二节';break;
@@ -262,11 +249,22 @@ export default {
         case 4:timeName = '第七、八节';break;
         case 5:timeName = '第九、十节';break;
       }
-      this.QueryForm.timeName = timeName;
 
+      this.QueryForm.timeName = timeName;
       this.QueryForm.roomId = roomId;
       this.QueryForm.roomName = roomName;
       this.confirmDialogVisible = true;
+      //添加借用人ID
+      this.QueryForm.user = window.sessionStorage.getItem('userId');
+
+      //添加申请时间信息
+      let year = new Date().getFullYear();
+      let month = new Date().getMonth() +1;
+      let day = new Date().getDate();
+      let hour = new Date().getHours();
+      let minute = new Date().getMinutes();
+      let second = new Date().getSeconds();
+      this.QueryForm.applyTime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
     },
 
     messageAlert(){
@@ -289,21 +287,6 @@ export default {
 
     confirmBorrow(){
       this.confirmDialogVisible = false;
-
-      let year = new Date().getFullYear();
-
-      let month = new Date().getMonth() +1;
-
-      let day = new Date().getDate();
-
-      let hour = new Date().getHours();
-
-      let minute = new Date().getMinutes();
-
-      let second = new Date().getSeconds();
-
-      this.QueryForm.applyTime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-
       this.$http({
         method:'post',
         url:'/room/borrow',
