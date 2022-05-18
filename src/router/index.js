@@ -47,4 +47,22 @@ const router = createRouter({
   routes
 })
 
+//导航守卫
+//开启前先做白名单
+router.beforeEach((to, from, next) => {
+  //页面拦截
+  if (to.name !== 'Login') {
+    let role = window.sessionStorage.getItem("role");
+    // let token = window.sessionStorage.getItem("token");
+    if (!role) {
+      return next({ name: 'Login' });
+    }
+    return next();
+  } else {
+    return next();
+  }
+
+
+})
+
 export default router

@@ -93,13 +93,14 @@ export default {
   width: 1440px;
   height: 900px;
   background: url("../../assets/img/loginBac.png");
+
 }
 
 .loginBox{
   width: 250px;
   height: 320px;
   position: absolute;
-  left: 955px;
+  left: 62%;
   top: 320px;
 }
 </style>

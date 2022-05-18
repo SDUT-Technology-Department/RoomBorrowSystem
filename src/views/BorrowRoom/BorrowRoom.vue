@@ -53,14 +53,13 @@
             disabled
         />
       </el-form-item>
-      <el-form-item label="会议室" @click="messageAlert" v-show="userInfo.role !== 'student'">
+      <el-form-item label="会议室" v-show="userInfo.role !== 'student'">
         <el-switch
             v-model="QueryForm.isSpecial"
             class="ml-2"
             active-color="#13ce66"
             inactive-color="#ff4949"
             @change="getRoom"
-            disabled
         />
       </el-form-item>
     </el-form>
@@ -110,18 +109,10 @@
         <el-tag>{{ QueryForm.timeName }}</el-tag>
       </el-form-item>
       <el-form-item label="多媒体">
-        <el-tag v-show="QueryForm.isMedia">
+        <el-tag v-show="isMedia">
           是
         </el-tag>
-        <el-tag type="danger" v-show="!QueryForm.isMedia">
-          否
-        </el-tag>
-      </el-form-item>
-      <el-form-item label="会议室">
-        <el-tag v-show="QueryForm.isSpecial">
-          是
-        </el-tag>
-        <el-tag type="danger" v-show="!QueryForm.isSpecial">
+        <el-tag type="danger" v-show="!isMedia">
           否
         </el-tag>
       </el-form-item>
@@ -173,10 +164,19 @@ export default {
         key:'上课',
         value:'上课'
       },{
-        label:'活动',
-        key:'活动',
-        value:'活动'
-      }],
+        label:'实训',
+        key:'实训',
+        value:'实训'
+      },{
+        label:'二课活动',
+        key:'二课活动',
+        value:'二课活动'
+      },{
+          label:'团日活动',
+          key:'团日活动',
+          value:'团日活动'
+        }
+        ],
 
       userInfo:{
         userId:'',
@@ -184,6 +184,8 @@ export default {
       },
 
       Rooms:[],
+
+      isMedia:'',
 
       QueryForm:{
         roomId:'',
@@ -267,24 +269,6 @@ export default {
       this.QueryForm.applyTime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
     },
 
-    messageAlert(){
-      ElMessageBox.confirm(
-          '如需多媒体卡请前往9教105领取',
-          '登记成功',
-          {
-            confirmButtonText: '确认',
-            cancelButtonText: '取消',
-            type: 'success',
-          }
-      )
-          .then(() => {
-
-          })
-          .catch(() => {
-
-          })
-    },
-
     confirmBorrow(){
       this.confirmDialogVisible = false;
       this.$http({
@@ -302,7 +286,25 @@ export default {
             this.getRoom();
           }
       })
-    }
+    },
+
+    messageAlert(){
+      ElMessageBox.confirm(
+          '如需多媒体卡请前往9教105领取',
+          '登记成功',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'success',
+          }
+      )
+          .then(() => {
+
+          })
+          .catch(() => {
+
+          })
+    },
   }
 }
 </script>
