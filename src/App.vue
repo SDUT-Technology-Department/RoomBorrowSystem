@@ -2,10 +2,12 @@
   <div class="background">
     <router-view></router-view>
   </div>
+  <Footer/>
 </template>
 
 <script>
 
+import Footer from "@/components/Footer";
 export default {
   name: 'App',
   mounted() {
@@ -23,6 +25,7 @@ export default {
     }
   },
   components: {
+    Footer
 
   }
 }
@@ -34,7 +37,7 @@ export default {
   display: flex;
   justify-content: center;
   min-width: 1024px;
-  min-height: 1080px !important;
+  min-height: 900px !important;
   /*width: 1440px;*/
   /*height: 900px;*/
   /*display: flex;*/

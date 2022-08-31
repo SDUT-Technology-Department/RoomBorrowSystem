@@ -21,11 +21,7 @@ const routes = [
       name: 'BorrowInfoList',
       component: () => import('../views/BorrowRoom/BorrowInfoList.vue')
     },
-    {
-      path: '/RoomInfo',
-      name: 'RoomInfo',
-      component: () => import('../views/BorrowRoom/RoomInfo.vue')
-    }]
+    ]
   },
   {
     path: '/RouterPage',
@@ -38,7 +34,11 @@ const routes = [
     name: 'Login',
     component: () => import('../views/User/Login.vue')
   },
-
+  {
+    path: '/Test',
+    name: 'Test',
+    component: () => import('../views/Test.vue')
+  },
 
 ]
 
@@ -49,7 +49,7 @@ const router = createRouter({
 
 //导航守卫
 //开启前先做白名单
-router.beforeEach((to, from, next) => {
+/*router.beforeEach((to, from, next) => {
   //页面拦截
   if (to.name !== 'Login') {
     let role = window.sessionStorage.getItem("role");
@@ -63,6 +63,6 @@ router.beforeEach((to, from, next) => {
   }
 
 
-})
+})*/
 
 export default router

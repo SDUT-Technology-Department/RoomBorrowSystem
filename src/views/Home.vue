@@ -14,7 +14,7 @@
             <div style="height: 50px;width: 100%;">
               <img src="../assets/img/logoW.png" style="height: 80%;width: 80%; margin-left: 20px;margin-top: 5px" alt="">
             </div>
-            <el-menu-item index="/BorrowRoom" style="background-color: #222D3C">教室借用</el-menu-item>
+            <el-menu-item index="/BorrowRoom">教室借用</el-menu-item>
             <el-menu-item index="/BorrowInfoList">教室借用记录查询</el-menu-item>
           </el-menu>
         </div>
@@ -22,6 +22,7 @@
       <el-main>
         <router-view></router-view>
       </el-main>
+
     </el-container>
 
   </div>

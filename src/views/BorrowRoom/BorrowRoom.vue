@@ -84,7 +84,7 @@
                   </el-space>
               </div>
             </div>
-            <el-button type="primary" @click="preBorrow(item.roomId,item.roomName)" style="width: 100%">借用该教室</el-button>
+            <el-button type="primary" @click="preBorrow(item.id,item.roomName)" style="width: 100%">借用该教室</el-button>
           </el-card>
         </div>
       </el-space>
@@ -181,6 +181,8 @@ export default {
       userInfo:{
         userId:'',
         role:'',
+        username:'',
+        userDepart:'',
       },
 
       Rooms:[],
@@ -197,7 +199,8 @@ export default {
         isSpecial:false,
         applyTime:'',
         reason:'',
-        user:'',
+        username:'',
+        userDepart:'',
       },
 
       confirmDialogVisible:false,
@@ -206,6 +209,8 @@ export default {
   mounted() {
     this.userInfo.userId = window.sessionStorage.getItem('userId');
     this.userInfo.role = window.sessionStorage.getItem('role');
+    this.userInfo.userDepart = window.sessionStorage.getItem('userDepart');
+    this.userInfo.username = window.sessionStorage.getItem("username");
   },
   methods:{
     getRoom(){
@@ -226,7 +231,7 @@ export default {
               type: 'success',
             })
 
-            this.Rooms = res.data.data;
+            this.Rooms = res.data.roomList;
           }
         })
       }
@@ -256,8 +261,9 @@ export default {
       this.QueryForm.roomId = roomId;
       this.QueryForm.roomName = roomName;
       this.confirmDialogVisible = true;
-      //添加借用人ID
-      this.QueryForm.user = window.sessionStorage.getItem('userId');
+      //添加借用人信息
+      this.QueryForm.username = this.userInfo.username;
+      this.QueryForm.userDepart = this.userInfo.userDepart;
 
       //添加申请时间信息
       let year = new Date().getFullYear();
@@ -294,7 +300,7 @@ export default {
           '登记成功',
           {
             confirmButtonText: '确认',
-            cancelButtonText: '取消',
+            cancelButtonText: '确认:)',
             type: 'success',
           }
       )
