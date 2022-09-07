@@ -40,15 +40,14 @@ export default {
         }else if (res.data.code === 200){
           ElNotification({
             title: '登陆成功',
-            message: '你好，' + res.data.user.username,
+            message: '你好，' + res.data.user.name,
             type: 'success',
           })
 
           //保存信息
           window.sessionStorage.setItem('role',res.data.user.role);
-          window.sessionStorage.setItem('username',res.data.user.username);
+          window.sessionStorage.setItem('username',res.data.user.name);
           window.sessionStorage.setItem('userId', res.data.user.userId);
-          window.sessionStorage.setItem('userDepart',res.data.user.userDepart);
 
           this.$router.push('/Home');
         }else {
@@ -93,8 +92,7 @@ export default {
 .bac{
   width: 1440px;
   height: 900px;
-  background: url("../../assets/img/loginBac.png");
-
+  /*background: url("../assets/img/loginBac.png");*/
 }
 
 .loginBox{

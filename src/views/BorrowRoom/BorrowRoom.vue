@@ -4,10 +4,10 @@
     <el-form label-width="120px">
       <el-form-item label="日期">
         <el-date-picker
-            v-model="QueryForm.date"
+            v-model="borrowForm.date"
             type="date"
             placeholder="请选择借用日期"
-            format="YYYY/MM/DD"
+            format="YYYY-MM-DD"
             value-format="YYYY-MM-DD"
             @change="getRoom"
             style="width: 200px"
@@ -15,8 +15,7 @@
       </el-form-item>
       <el-form-item label="时间">
         <el-select
-            v-model="QueryForm.timeId"
-
+            v-model="borrowForm.time"
             placeholder="请选择借用时间"
             style="width: 200px"
             @change="getRoom"
@@ -31,8 +30,7 @@
       </el-form-item>
       <el-form-item label="原因">
         <el-select
-            v-model="QueryForm.reason"
-
+            v-model="borrowForm.reason"
             placeholder="请选择借用原因"
             style="width: 200px"
             @change="getRoom">
@@ -44,51 +42,30 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="多媒体">
-        <el-switch
-            v-model="QueryForm.isMedia"
-            class="ml-2"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            disabled
-        />
-      </el-form-item>
-      <el-form-item label="会议室" v-show="userInfo.role !== 'student'">
-        <el-switch
-            v-model="QueryForm.isSpecial"
-            class="ml-2"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            @change="getRoom"
-        />
-      </el-form-item>
     </el-form>
     <el-divider />
     <div style="margin-left:20px;margin-right:20px;padding-left: 70px;padding-top: 40px;padding-bottom: 30px">
-
       <el-space :size="45" wrap>
         <div v-for="(item,i) in Rooms">
-          <el-card :body-style="{ padding: '0px' }" style="height: 235px;width: 200px;">
-            <div style="height: 110px;width: 200px;">
+          <el-card :body-style="{ padding: '0px' }" style="width: 200px;">
+<!--            <div style="height: 110px;width: 200px;">
               <el-image :src="item.img" />
               此处是教室图片
-            </div>
-
+            </div>-->
             <div style="padding: 14px">
-              <div style="margin-bottom: 10px">{{ item.roomName }}</div>
-              <div style="width: 200px;height: 32px">
-                  <el-space wrap>
-                    <el-tag v-show="item.isPower === 1">电源</el-tag>
-                    <el-tag v-show="item.isMedia === 1">多媒体</el-tag>
-                    <el-tag v-show="item.isSpecial === 1">会议室</el-tag>
+              <div style="margin-bottom: 10px">{{ item.name }}</div>
+              <div style="width: 200px;">
+                  <el-space wrap v-for="(subItem,j) in item.description">
+                    <el-tag style="margin-top: 10px">{{subItem}}</el-tag>
                   </el-space>
               </div>
             </div>
-            <el-button type="primary" @click="preBorrow(item.id,item.roomName)" style="width: 100%">借用该教室</el-button>
+
+            <el-button type="primary" @click="preBorrow(item.name)" v-if="item.status === '1'" style="width: 100%">借用该教室</el-button>
+            <el-button type="info" disabled v-if="item.status === '2'" style="width: 100%">维护中</el-button>
           </el-card>
         </div>
       </el-space>
-
     </div>
   </el-card>
 
@@ -100,21 +77,13 @@
   >
     <el-form label-width="120px">
       <el-form-item label="教室">
-        {{ QueryForm.roomName }}
+        {{ borrowForm.roomName }}
       </el-form-item>
       <el-form-item label="借用日期">
-        {{ QueryForm.date }}
+        {{ borrowForm.date }}
       </el-form-item>
       <el-form-item label="借用时间">
-        <el-tag>{{ QueryForm.timeName }}</el-tag>
-      </el-form-item>
-      <el-form-item label="多媒体">
-        <el-tag v-show="isMedia">
-          是
-        </el-tag>
-        <el-tag type="danger" v-show="!isMedia">
-          否
-        </el-tag>
+        <el-tag>{{ borrowForm.time }}</el-tag>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -133,51 +102,8 @@ export default {
   name: "BorrowRoom",
   data(){
     return{
-      TimeOption:[
-      { label:'第一、二节',
-        key:'第一、二节',
-        value:1
-      },{
-        label:'第三、四节',
-        key:'第三、四节',
-        value:2
-      },{
-        label:'第五、六节',
-        key:'第五、六节',
-        value:3
-      },{
-        label:'第七、八节',
-        key:'第七、八节',
-        value:4
-      },{
-        label:'第九、十节',
-        key:'第九、十节',
-        value:5
-      },],
-      ReasonOptions:[
-          {
-        label:'会议',
-        key:'会议',
-        value:'会议'
-      },{
-        label:'上课',
-        key:'上课',
-        value:'上课'
-      },{
-        label:'实训',
-        key:'实训',
-        value:'实训'
-      },{
-        label:'二课活动',
-        key:'二课活动',
-        value:'二课活动'
-      },{
-          label:'团日活动',
-          key:'团日活动',
-          value:'团日活动'
-        }
-        ],
-
+      TimeOption:[],
+      ReasonOptions:[],
       userInfo:{
         userId:'',
         role:'',
@@ -189,57 +115,58 @@ export default {
 
       isMedia:'',
 
-      QueryForm:{
-        roomId:'',
-        roomName:'',
+      borrowForm:{
+        name:'',
+        time:'',
         date:'',
-        timeId:'',
-        timeName:'',
-        isMedia:true,
-        isSpecial:false,
-        applyTime:'',
         reason:'',
-        username:'',
-        userDepart:'',
+        applyDate:'',
+        roomName:'',
       },
 
       confirmDialogVisible:false,
     }
   },
   mounted() {
-    this.userInfo.userId = window.sessionStorage.getItem('userId');
     this.userInfo.role = window.sessionStorage.getItem('role');
-    this.userInfo.userDepart = window.sessionStorage.getItem('userDepart');
-    this.userInfo.username = window.sessionStorage.getItem("username");
+    this.userInfo.name = window.sessionStorage.getItem("username");
+    this.getAllTimeOptions();
+    this.getAllReasons();
   },
   methods:{
     getRoom(){
-      if (this.QueryForm.date!=='' && this.QueryForm.reason!=='' && this.QueryForm.timeId!==''){
-        this.$http({
-          method:'post',
-          url:'/room/searchRoomForBorrow',
-          data:this.QueryForm
-        }).then(res =>{
-          if (res.data.code !== 200){
-            ElMessage({
-              message: '教室信息获取失败，请联系工具人QQ3231977651',
-              type: 'error',
-            })
-          }else {
-            ElMessage({
-              message: '教室信息获取成功',
-              type: 'success',
-            })
-
-            this.Rooms = res.data.roomList;
-          }
-        })
+      if (this.borrowForm.date==='' || this.borrowForm.reason==='' || this.borrowForm.time ===''){
+        return;
       }
+      this.$http({
+        method:'post',
+        url:'/borrowInfo/notBorrowedYet',
+        data:this.borrowForm
+      }).then(({data}) =>{
+        console.log(data);
+        if (data.code !== 200){
+          ElMessage({
+            message: '教室信息获取失败，请联系管理员',
+            type: 'error',
+          })
+        }else {
+          ElMessage({
+            message: '教室信息获取成功',
+            type: 'success',
+          })
+          this.Rooms = data.list;
+
+          for(let i=0;i<this.Rooms.length;i++){
+            this.Rooms[i].description = this.Rooms[i].description.split(';');
+          }
+          console.log(this.Rooms);
+        }
+      })
 
     },
     //借用请求预处理
-    preBorrow(roomId,roomName){
-      if(this.QueryForm.date === '' || this.QueryForm.timeId.length === 0){
+    preBorrow(roomName){
+      if(this.borrowForm.date === '' || this.borrowForm.time === ''){
         ElMessage({
           message: '请先选择欲借用的日期和时间段',
           type: 'warning',
@@ -247,24 +174,9 @@ export default {
         return;
       }
 
-      //添加时间ID
-      let timeName;
-      switch (this.QueryForm.timeId){
-        case 1:timeName = '第一、二节';break;
-        case 2:timeName = '第三、四节';break;
-        case 3:timeName = '第五、六节';break;
-        case 4:timeName = '第七、八节';break;
-        case 5:timeName = '第九、十节';break;
-      }
-
-      this.QueryForm.timeName = timeName;
-      this.QueryForm.roomId = roomId;
-      this.QueryForm.roomName = roomName;
-      this.confirmDialogVisible = true;
+      this.borrowForm.roomName = roomName;
       //添加借用人信息
-      this.QueryForm.username = this.userInfo.username;
-      this.QueryForm.userDepart = this.userInfo.userDepart;
-
+      this.borrowForm.name = this.userInfo.username;
       //添加申请时间信息
       let year = new Date().getFullYear();
       let month = new Date().getMonth() +1;
@@ -272,15 +184,16 @@ export default {
       let hour = new Date().getHours();
       let minute = new Date().getMinutes();
       let second = new Date().getSeconds();
-      this.QueryForm.applyTime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-    },
+      this.borrowForm.applyDate = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+      this.confirmDialogVisible = true;
+      },
 
     confirmBorrow(){
       this.confirmDialogVisible = false;
       this.$http({
         method:'post',
-        url:'/room/borrow',
-        data:this.QueryForm
+        url:'/borrowInfo/borrow',
+        data:this.borrowForm
       }).then(res =>{
           if (res.data.code !== 200){
             ElMessage({
@@ -311,6 +224,36 @@ export default {
 
           })
     },
+
+    getAllReasons(){
+      this.$http({
+        url:'/reason/getAllReasonOption',
+        method:'get'
+      }).then(({data}) => {
+        for (let i = 0; i < data.list.length; i++) {
+          this.ReasonOptions.push({
+            label: data.list[i].name,
+            key: data.list[i].name,
+            value: data.list[i].name
+          })
+        }
+      })
+    },
+
+    getAllTimeOptions(){
+      this.$http({
+        url:'/timeOption/getAllTimeOption',
+        method:'get',
+      }).then(({data})=>{
+        for(let i=0;i<data.list.length;i++){
+          this.TimeOption.push({
+           label:data.list[i].name,
+           key:data.list[i].name,
+           value:data.list[i].name
+          })
+        }
+     })
+    }
   }
 }
 </script>

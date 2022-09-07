@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 export default {
   name: 'App',
   mounted() {
-    document.title = "计算机科学与技术学院借教室系统";
+    document.title = "化学化工学院教室预约系统";
 
   },
   created() {

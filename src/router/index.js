@@ -11,28 +11,35 @@ const routes = [
     redirect: '/BorrowRoom',
     component: () => import('../views/Home.vue'),
     //---------------------教室借用相关-----------------------------
-    children:[{
-      path: '/BorrowRoom',
-      name: 'BorrowRoom',
-      component: () => import('../views/BorrowRoom/BorrowRoom.vue')
-    },
-    {
-      path: '/BorrowInfoList',
-      name: 'BorrowInfoList',
-      component: () => import('../views/BorrowRoom/BorrowInfoList.vue')
-    },
+    children:[
+      {
+        path: '/BorrowRoom',
+        name: 'BorrowRoom',
+        component: () => import('../views/BorrowRoom/BorrowRoom.vue')
+      },
+      {
+        path: '/BorrowInfoList',
+        name: 'BorrowInfoList',
+        component: () => import('../views/BorrowRoom/BorrowInfoList.vue')
+      },
+      //---------------------管理员部分-----------------------------
+      {
+        path: '/UserManage',
+        name: 'UserManage',
+        component: () => import('../views/Admin/UserManage.vue')
+      },
+      {
+        path: '/RoomTimeAndReasonManage',
+        name: 'RoomTimeAndReasonManage',
+        component: () => import('../views/Admin/RoomTimeAndReasonManage.vue')
+      },
     ]
   },
-  {
-    path: '/RouterPage',
-    name: 'RouterPage',
-    component: () => import('../views/RouterPage.vue')
-  },
-  //---------------------用户/User--------------------------------------------------------------------
+  //---------------------用户/Admin--------------------------------------------------------------------
   {
     path: '/Login',
     name: 'Login',
-    component: () => import('../views/User/Login.vue')
+    component: () => import('../views/Login.vue')
   },
   {
     path: '/Test',

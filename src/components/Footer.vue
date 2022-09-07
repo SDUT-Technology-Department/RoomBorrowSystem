@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex;width: 100%;justify-content: center">
-    <el-button style="border: 1px solid transparent" text @click="dialogVisible = true">© 2022 . All Rights Reserved | Designed by 王琳珊，张开源 | V2.0
+    <el-button style="border: 1px solid transparent" text @click="dialogVisible = true">© 2022 . All Rights Reserved | Designed by 周晋，张开源 | V1.0
     </el-button>
     <el-dialog
         v-model="dialogVisible"
@@ -9,14 +9,14 @@
         style="text-align: left"
     >
       <div style="text-align: left">
-        <div>指导老师：王琳珊</div>
+        <div>指导老师：周晋</div>
         <div>开发者：张开源</div>
-        <div>版本：2.0</div>
+        <div>版本：1.0</div>
       </div>
       <template #footer>
       <span class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false" size="small"
-        >OK</el-button
+        >好</el-button
         >
       </span>
       </template>

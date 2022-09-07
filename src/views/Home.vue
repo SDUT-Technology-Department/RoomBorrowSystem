@@ -11,20 +11,20 @@
               default-active="2"
               text-color="#fff"
               :router="true">
-            <div style="height: 50px;width: 100%;">
-              <img src="../assets/img/logoW.png" style="height: 80%;width: 80%; margin-left: 20px;margin-top: 5px" alt="">
+            <div style="height: 70px;width: 100%;padding-top: 20px">
+<!--              <img src="../assets/img/logoW.png" style="height: 60%;width: 80%; margin-left: 20px;margin-top: 5px" alt="">-->
             </div>
             <el-menu-item index="/BorrowRoom">教室借用</el-menu-item>
             <el-menu-item index="/BorrowInfoList">教室借用记录查询</el-menu-item>
+            <el-menu-item index="/UserManage">用户管理</el-menu-item>
+            <el-menu-item index="/RoomTimeAndReasonManage">系统管理</el-menu-item>
           </el-menu>
         </div>
       </el-aside>
       <el-main>
         <router-view></router-view>
       </el-main>
-
     </el-container>
-
   </div>
 </template>
 
