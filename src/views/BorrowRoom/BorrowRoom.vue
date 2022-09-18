@@ -1,7 +1,11 @@
 <template>
   <el-page-header content="借用登记" style="margin-bottom: 30px" @back="this.$router.push('/Login')"/>
   <el-card>
+
     <el-form label-width="120px">
+      <el-form-item label="修改密码">
+        <el-button type="primary" @click="pwdVisable=true">修改密码</el-button>
+      </el-form-item>
       <el-form-item label="日期">
         <el-date-picker
             v-model="borrowForm.date"
@@ -18,6 +22,8 @@
             v-model="borrowForm.time"
             placeholder="请选择借用时间"
             style="width: 200px"
+            multiple
+            collapse-tags
             @change="getRoom"
         >
           <el-option
@@ -83,13 +89,36 @@
         {{ borrowForm.date }}
       </el-form-item>
       <el-form-item label="借用时间">
-        <el-tag>{{ borrowForm.time }}</el-tag>
+        <el-space v-for="(item,i) in borrowForm.time">
+          <el-tag>{{ item }}</el-tag>
+        </el-space>
       </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="confirmDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="confirmBorrow">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <el-dialog
+      v-model="pwdVisable"
+      title="修改密码"
+      width="30%"
+  >
+    <el-form label-width="120px">
+      <el-form-item label="旧密码">
+        <el-input v-model="userInfo.oldPwd"/>
+      </el-form-item>
+      <el-form-item label="新密码">
+        <el-input v-model="userInfo.newPwd"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="pwdVisable = false">取消</el-button>
+        <el-button type="primary" @click="changePwd">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -109,6 +138,8 @@ export default {
         role:'',
         username:'',
         userDepart:'',
+        newPwd:'',
+        oldPwd:''
       },
 
       Rooms:[],
@@ -117,7 +148,7 @@ export default {
 
       borrowForm:{
         name:'',
-        time:'',
+        time:[],
         date:'',
         reason:'',
         applyDate:'',
@@ -125,17 +156,21 @@ export default {
       },
 
       confirmDialogVisible:false,
+
+      pwdVisable:false
     }
   },
   mounted() {
     this.userInfo.role = window.sessionStorage.getItem('role');
     this.userInfo.name = window.sessionStorage.getItem("username");
+    this.userInfo.username = window.sessionStorage.getItem("username");
+    this.userInfo.userId = window.sessionStorage.getItem("userId");
     this.getAllTimeOptions();
     this.getAllReasons();
   },
   methods:{
     getRoom(){
-      if (this.borrowForm.date==='' || this.borrowForm.reason==='' || this.borrowForm.time ===''){
+      if (this.borrowForm.date==='' || this.borrowForm.time.length === 0){
         return;
       }
       this.$http({
@@ -143,7 +178,6 @@ export default {
         url:'/borrowInfo/notBorrowedYet',
         data:this.borrowForm
       }).then(({data}) =>{
-        console.log(data);
         if (data.code !== 200){
           ElMessage({
             message: '教室信息获取失败，请联系管理员',
@@ -159,14 +193,13 @@ export default {
           for(let i=0;i<this.Rooms.length;i++){
             this.Rooms[i].description = this.Rooms[i].description.split(';');
           }
-          console.log(this.Rooms);
         }
       })
 
     },
     //借用请求预处理
     preBorrow(roomName){
-      if(this.borrowForm.date === '' || this.borrowForm.time === ''){
+      if(this.borrowForm.date === '' || this.borrowForm.time.length === 0){
         ElMessage({
           message: '请先选择欲借用的日期和时间段',
           type: 'warning',
@@ -209,7 +242,7 @@ export default {
 
     messageAlert(){
       ElMessageBox.confirm(
-          '如需多媒体卡请前往9教105领取',
+          '请等待管理员审核',
           '登记成功',
           {
             confirmButtonText: '确认',
@@ -253,6 +286,27 @@ export default {
           })
         }
      })
+    },
+
+    changePwd(){
+      this.$http({
+        url:'/user/changePwd',
+        method:'post',
+        data:this.userInfo
+      }).then(({data})=> {
+        if (data.code === 200){
+          ElMessage({
+            message: '修改成功',
+            type: 'success',
+          })
+          this.pwdVisable = false;
+        }else {
+          ElMessage({
+            message: '修改失败，' + data.msg,
+            type: 'warning',
+          })
+        }
+      })
     }
   }
 }

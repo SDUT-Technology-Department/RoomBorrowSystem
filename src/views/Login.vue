@@ -45,9 +45,10 @@ export default {
           })
 
           //保存信息
+          console.log(res)
           window.sessionStorage.setItem('role',res.data.user.role);
           window.sessionStorage.setItem('username',res.data.user.name);
-          window.sessionStorage.setItem('userId', res.data.user.userId);
+          window.sessionStorage.setItem('userId', res.data.user.id.toString());
 
           this.$router.push('/Home');
         }else {

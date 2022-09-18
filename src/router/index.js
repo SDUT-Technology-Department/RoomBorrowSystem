@@ -24,6 +24,11 @@ const routes = [
       },
       //---------------------管理员部分-----------------------------
       {
+        path: '/Admit',
+        name: 'Admit',
+        component: () => import('../views/Admin/Admit.vue')
+      },
+      {
         path: '/UserManage',
         name: 'UserManage',
         component: () => import('../views/Admin/UserManage.vue')

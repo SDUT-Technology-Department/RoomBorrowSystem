@@ -41,26 +41,38 @@
               :value="item.value"
           />
         </el-select>
-        <el-form-item label="导入课表" v-show="userRole === 'admin'">
-          <el-breadcrumb :separator-icon="ArrowRight" style="margin-right: 20px;">
-            <el-date-picker v-model="this.startDate" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" placeholder="学期开始日期"/>
-          </el-breadcrumb>
-          <el-upload :on-change="fileChange" :show-file-list="false" :auto-upload="false">
-            <el-button type="warning">上传</el-button>
-          </el-upload>
-        </el-form-item>
+      </el-form-item>
+
+      <el-form-item label="导入课表" v-show="userInfo.role === 'admin'">
+        <a href="/static/template.xls" download="课表模板.xlsx">
+          <el-button type="primary" style="margin-right: 10px;" :loading="loading">下载模板</el-button>
+        </a>
+        <el-breadcrumb :separator-icon="ArrowRight" style="margin-right: 20px;">
+          <el-date-picker v-model="this.startDate" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" placeholder="学期开始日期"/>
+        </el-breadcrumb>
+        <el-upload :on-change="fileChange" :show-file-list="false" :auto-upload="false">
+          <el-button type="warning" :loading="loading">上传</el-button>
+        </el-upload>
       </el-form-item>
     </el-form>
+
     <el-divider />
-    <div style="margin-left:20px;margin-right:20px;padding-left: 70px;padding-top: 40px;padding-bottom: 30px" v-loading:loading>
-      <el-table :data="borrowInfo" stripe  border :highlight-current-row="true" style="width: 100%">
-        <el-table-column prop="date" label="日期" width="120" />
-        <el-table-column prop="time" label="时间" width="120" />
-        <el-table-column prop="roomName" label="教室名称" width="100" />
-        <el-table-column prop="reason" label="用途" width="150"/>
-        <el-table-column prop="name" label="借用人" />
-        <el-table-column prop="applyDate" label="申请时间" width="180"/>
-        <el-table-column  label="操作">
+    <div>
+      <el-table :data="borrowInfo" stripe  border v-loading="loading" :highlight-current-row="true">
+        <el-table-column align="center" prop="date" label="日期" width="120" />
+        <el-table-column align="center" prop="time" label="时间" width="120" />
+        <el-table-column align="center" prop="roomName" label="教室名称" width="100" />
+        <el-table-column align="center" prop="reason" label="用途" width="150"/>
+        <el-table-column align="center" prop="name" label="借用人" />
+        <el-table-column align="center" prop="applyDate" label="申请时间" width="180"/>
+        <el-table-column align="center" label="状态">
+          <template #default="scope">
+            <el-tag v-show="scope.row.isAdmit === '0'" type="warning">待审核</el-tag>
+            <el-tag v-show="scope.row.isAdmit === '2'" type="danger">拒绝</el-tag>
+            <el-tag v-show="scope.row.isAdmit === '1'" type="success">通过</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作">
           <template #default="scope">
             <el-button type="danger" @click="cancel(scope.row.id)" v-show="userInfo.role === 'admin' || userInfo.username === scope.row.name">撤销</el-button>
           </template>
@@ -73,7 +85,7 @@
 
           v-model:page-size="subForm.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
+          :total="subForm.total">
       </el-pagination>
     </div>
   </el-card>
@@ -116,13 +128,15 @@ export default {
   mounted() {
     this.userInfo.role = window.sessionStorage.getItem("role");
     this.userInfo.userId = window.sessionStorage.getItem("userId");
-
+    this.userInfo.username = window.sessionStorage.getItem("username");
     this.getBorrowInfo();
     this.getAllRooms();
     this.getAllTimeOptions();
+    console.log(this.userInfo)
   },
   methods:{
     getAllTimeOptions(){
+      this.loading = true;
       this.$http({
         url:'/timeOption/getAllTimeOption',
         method:'get',
@@ -134,9 +148,11 @@ export default {
             value:data.list[i].name
           })
         }
+        this.loading = false;
       })
     },
     getAllRooms(){
+      this.loading = true;
       this.$http({
         url:'/room/getAllRoom',
         method:'get',
@@ -148,6 +164,7 @@ export default {
             value:data.list[i].name
           })
         }
+        this.loading = false;
       })
     },
 
@@ -161,7 +178,7 @@ export default {
         console.log(res);
         if (res.data.code !== 200){
           ElMessage({
-            message: '教室信息获取失败，请联系工具人QQ3231977651',
+            message: '教室信息获取失败',
             type: 'error',
           })
         }else {
@@ -196,13 +213,15 @@ export default {
     },
 
     importTimeTable(){
-      if (this.startDate === null || this.subForm.roomId === ''){
+      this.loading = true;
+      if (this.startDate === null || this.subForm.roomName === ''){
         alert("请选择日期和教室");
+        this.loading = false;
         return;
       }
 
       formData.append("startDate",this.startDate);
-      formData.append("roomId",this.subForm.roomId);
+      formData.append("roomName",this.subForm.roomName);
 
       this.$http({
         method: 'post',
@@ -221,13 +240,14 @@ export default {
           this.getBorrowInfo();
         } else {
           this.$notify({
-            title: '上传失败',
+            title: '文件解析失败',
             message: res.data.msg,
-            type: 'warning'
+            type: 'error'
           });
         }
         formData = null;
         formData = new FormData();
+        this.loading = false;
       })
     },
   }

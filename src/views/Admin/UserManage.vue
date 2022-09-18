@@ -8,8 +8,8 @@
         </div>
       </div>
       <!--表格展示-->
-      <div style="margin-top: 10px;height: 670px" v-loading="loading">
-        <el-table :data="userList" border stripe >
+      <div style="margin-top: 20px">
+        <el-table :data="userList" border stripe v-loading="loading">
           <el-table-column align="center" prop="id" label="工号"/>
           <el-table-column align="center" prop="name" label="姓名" />
           <el-table-column align="center" prop="role" label="身份"/>
