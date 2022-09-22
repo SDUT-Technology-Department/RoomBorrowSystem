@@ -3,9 +3,6 @@
   <el-card>
 
     <el-form label-width="120px">
-      <el-form-item label="修改密码">
-        <el-button type="primary" @click="pwdVisable=true">修改密码</el-button>
-      </el-form-item>
       <el-form-item label="日期">
         <el-date-picker
             v-model="borrowForm.date"
@@ -60,7 +57,7 @@
             </div>-->
             <div style="padding: 14px">
               <div style="margin-bottom: 10px">{{ item.name }}</div>
-              <div style="width: 200px;">
+              <div style="width: 100%;padding-left: 10px;padding-right: 10px">
                   <el-space wrap v-for="(subItem,j) in item.description">
                     <el-tag style="margin-top: 10px">{{subItem}}</el-tag>
                   </el-space>
@@ -74,8 +71,6 @@
       </el-space>
     </div>
   </el-card>
-
-
   <el-dialog
       v-model="confirmDialogVisible"
       title="请确认您的借用信息"
@@ -98,27 +93,6 @@
       <span class="dialog-footer">
         <el-button @click="confirmDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="confirmBorrow">确认</el-button>
-      </span>
-    </template>
-  </el-dialog>
-
-  <el-dialog
-      v-model="pwdVisable"
-      title="修改密码"
-      width="30%"
-  >
-    <el-form label-width="120px">
-      <el-form-item label="旧密码">
-        <el-input v-model="userInfo.oldPwd"/>
-      </el-form-item>
-      <el-form-item label="新密码">
-        <el-input v-model="userInfo.newPwd"/>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="pwdVisable = false">取消</el-button>
-        <el-button type="primary" @click="changePwd">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -156,8 +130,6 @@ export default {
       },
 
       confirmDialogVisible:false,
-
-      pwdVisable:false
     }
   },
   mounted() {
@@ -199,9 +171,9 @@ export default {
     },
     //借用请求预处理
     preBorrow(roomName){
-      if(this.borrowForm.date === '' || this.borrowForm.time.length === 0){
+      if(this.borrowForm.date === '' || this.borrowForm.time.length === 0|| this.borrowForm.reason === ''){
         ElMessage({
-          message: '请先选择欲借用的日期和时间段',
+          message: '请完善借用信息',
           type: 'warning',
         })
         return;
@@ -288,26 +260,7 @@ export default {
      })
     },
 
-    changePwd(){
-      this.$http({
-        url:'/user/changePwd',
-        method:'post',
-        data:this.userInfo
-      }).then(({data})=> {
-        if (data.code === 200){
-          ElMessage({
-            message: '修改成功',
-            type: 'success',
-          })
-          this.pwdVisable = false;
-        }else {
-          ElMessage({
-            message: '修改失败，' + data.msg,
-            type: 'warning',
-          })
-        }
-      })
-    }
+
   }
 }
 </script>

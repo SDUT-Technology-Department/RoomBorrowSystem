@@ -38,6 +38,11 @@ const routes = [
         name: 'RoomTimeAndReasonManage',
         component: () => import('../views/Admin/RoomTimeAndReasonManage.vue')
       },
+      {
+        path: '/Personal',
+        name: 'Personal',
+        component: () => import('../views/Personal.vue')
+      },
     ]
   },
   //---------------------用户/Admin--------------------------------------------------------------------

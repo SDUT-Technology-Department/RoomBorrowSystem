@@ -54,6 +54,9 @@
           <el-button type="warning" :loading="loading">上传</el-button>
         </el-upload>
       </el-form-item>
+      <el-form-item label="下载记录" v-show="userInfo.role === 'admin'">
+      <el-button type="primary" @click="exportExcel">导出记录</el-button>
+      </el-form-item>
     </el-form>
 
     <el-divider />
@@ -62,10 +65,10 @@
         <el-table-column align="center" prop="date" label="日期" width="120" />
         <el-table-column align="center" prop="time" label="时间" width="120" />
         <el-table-column align="center" prop="roomName" label="教室名称" width="100" />
-        <el-table-column align="center" prop="reason" label="用途" width="150"/>
+        <el-table-column align="center" prop="reason" label="用途" width="180"/>
         <el-table-column align="center" prop="name" label="借用人" />
-        <el-table-column align="center" prop="applyDate" label="申请时间" width="180"/>
-        <el-table-column align="center" label="状态">
+        <el-table-column align="center" prop="applyDate" label="申请时间" width="200"/>
+        <el-table-column align="center"  width="100" label="状态">
           <template #default="scope">
             <el-tag v-show="scope.row.isAdmit === '0'" type="warning">待审核</el-tag>
             <el-tag v-show="scope.row.isAdmit === '2'" type="danger">拒绝</el-tag>
@@ -167,7 +170,6 @@ export default {
         this.loading = false;
       })
     },
-
     getBorrowInfo(){
       this.loading = true;
       this.$http({
@@ -247,6 +249,30 @@ export default {
         }
         formData = null;
         formData = new FormData();
+        this.loading = false;
+      })
+    },
+
+    exportExcel() {
+      this.loading = true;
+      this.$http({
+        method: 'get',
+        url: '/borrowInfo/exportExcel',
+        responseType: "arraybuffer"
+      }).then((file) => {
+        //流文件下载
+        let content = file.data;
+        // 组装a标签
+        let elink = document.createElement("a");
+        // 设置下载文件名
+
+        elink.download ="借用记录.xls";
+        elink.style.display = "none";
+        let blob = new Blob([content], {type: "application/xls"})
+        elink.href = URL.createObjectURL(blob);
+        document.body.appendChild(elink);
+        elink.click();
+        document.body.removeChild(elink);
         this.loading = false;
       })
     },
